@@ -124,7 +124,7 @@ public class HotelReservationSystem {
 			System.out.println("Enter guest name: ");
 			String guestName = scanner.next();
 
-			String query = "select room_number from reservations where reservation_id = " + reservationId + "and guest_name = '" + guestName + "';";
+			String query = "select room_number from reservations where reservation_id = " + reservationId + "and guest_name = '" + guestName + "'";
 
 			try (Statement statement = con.createStatement();
 			     ResultSet resultSet = statement.executeQuery(query)) {
@@ -142,14 +142,93 @@ public class HotelReservationSystem {
 	}
 
 	private static void updateReservation(Connection con, Scanner scanner) {
+		try {
+			System.out.print("Enter reservation id to update: ");
+			int reservationId = scanner.nextInt();
+			scanner.nextLine();
 
+			if (!reservationExists(con , reservationId)){
+				System.out.println("Reservation not found for the given ID.");
+				return;
+			}
+
+			System.out.print("Enter new guest name: ");
+			String newGuestName = scanner.nextLine();
+			System.out.print("Enter new room number: ");
+			int newRoomNumber = scanner.nextInt();
+			System.out.print("Enter new contact number: ");
+			String newContactNumber = scanner.next();
+
+			String query = "update reservations set guest_name = '" + newGuestName + "', room_number = " + newRoomNumber + " , contact_number = '" + newContactNumber + "' where reservation_id = " + reservationId;
+
+			try (Statement statement = con.createStatement()) {
+				int affectedRows = statement.executeUpdate(query);
+
+				if (affectedRows > 0) {
+					System.out.println("Reservation update successfully!");
+				} else {
+					System.out.println("Reservation update failed.");
+				}
+			}
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
 	}
 
 	private static void deleteReservation(Connection con, Scanner scanner) {
+		try {
+			System.out.print("Enter reservation id to delete: ");
+			int reservationId = scanner.nextInt();
 
+			if (!reservationExists(con,reservationId)) {
+				System.out.println("reservation not found for the given ID.");
+				return;
+			}
+
+			String query = "delete from reservations where reservation_id = " + reservationId;
+
+			try(Statement statement = con.createStatement()) {
+				int affectedRows = statement.executeUpdate(query);
+
+				if (affectedRows > 0) {
+					System.out.println("Reservation deleted successfully!");
+				} else {
+					System.out.println("reservation deleted fail.");
+				}
+			}
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
 	}
 
-	private static void exit(){
+	private static boolean reservationExists(Connection con , int reservationId) {
+		try {
+			String query = "select reservation_id from reservations where reservation_id = " + reservationId;
 
+			try (Statement statement = con.createStatement();
+			     ResultSet resultSet = statement.executeQuery(query)) {
+
+				return  resultSet.next();
+			}
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			return false;
+		}
+	}
+
+	private static void exit() {
+		System.out.print("Exiting System");
+		int i = 5;
+		while (i != 0) {
+			System.out.print(".");
+			try {
+				Thread.sleep(450);
+			} catch (InterruptedException e) {
+
+			}
+			i--;
+		}
+		System.out.println();
+		System.out.println("Thank you for using hotel reservation system!!!");
 	}
 }
