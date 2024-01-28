@@ -124,7 +124,7 @@ public class HotelReservationSystem {
 			System.out.println("Enter guest name: ");
 			String guestName = scanner.next();
 
-			String query = "select room_number from reservations where reservation_id = " + reservationId + "and guest_name = '" + guestName + "'";
+			String query = "select room_number from reservations where reservation_id = " + reservationId +" and guest_name = '" + guestName +"';";
 
 			try (Statement statement = con.createStatement();
 			     ResultSet resultSet = statement.executeQuery(query)) {
@@ -136,7 +136,7 @@ public class HotelReservationSystem {
 					System.out.println("Reservation not found for the given id and guest name.");
 				}
 			}
-		} catch (Exception ex) {
+		} catch (SQLException ex) {
 			ex.printStackTrace();
 		}
 	}
